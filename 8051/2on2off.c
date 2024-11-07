@@ -1,22 +1,27 @@
-
-//LED flashing (p2 , 2 ON , 2 OFF)
-#include<reg51.h>
+//TWO on two off -: 
+#include  <reg51.h>
 
 void main(){
-	while(1){
-	P2=0xCC;
-	delay();
-	P2=0x00;
-	delay();
-	}
+  while(1){
+  P2=0XCC;    // FOR ALTERNATE AA
+  Delay();
+  P2=0X33;    // 55
+  Delay();
+ }
 }
-delay(){
-	TMOD=0x01;
-	TL0=0x00;
-	TH0=0x00;
-	TR0=1;
-	while(TF0==0)
-	TR0=0;
-	TF0=0;
+ 
+Delay(){
+ unsigned char j;
+ for(j=0;j<20;j++){
+  TMOD=0X01;
+  TH0=0XDC;
+  TL0=0X00;
+  while(TF0==1);
+  TR0=0;
+  TF0=0;
+ }
 }
-		  
+
+//ALTERNATE
+//1010 1010 AA
+//0101 0101 55
