@@ -1,5 +1,5 @@
-decade and hex counter-:          #include  <reg51.h>
-
+//decade and hex counter-:          
+#include  <reg51.h>
 void delay(); 
 
 void main() {
