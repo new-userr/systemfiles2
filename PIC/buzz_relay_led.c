@@ -1,57 +1,45 @@
-#include<P18F4550.h>
+expt-5 pic_interfacing of_led_relay_buzzers-:#include <PIC18F4550.H>
 
-void delay()
-{
-	unsigned int i;
-	for(i=0;i<30000;i++);
+// Function to introduce a delay
+void delay(){
+    unsigned int i;
+    for(i=0; i<30000; i++); // Loop for delay
 }
 
-void main()
-{
+void main(){
     unsigned char i, key = 0;
+    
+    TRISB = 0x00;  // Set PORTB as output (for LEDs)
+    ADCON1 = 0x0F; // Set all analog pins as digital
+    TRISAbits.TRISA2 = 1;  // Set RA2 as input (key1)
+    TRISAbits.TRISA3 = 1;  // Set RA3 as input (key2)
+    TRISAbits.TRISA5 = 0;  // Set RA5 as output (buzzer)
+    TRISAbits.TRISA4 = 0;  // Set RA4 as output (relay)
 
-    TRISB = 0x00;                           //LED pins as output
-    //LATB = 0x00;
+    while(1){
+        // Check if keys are pressed (RA2 or RA3)
+        if(PORTAbits.RA2 == 0) key = 0; // key 0 if RA2 is pressed
+        if(PORTAbits.RA3 == 0) key = 1; // key 1 if RA3 is pressed
 
-    ADCON1 = 0x0F;                          //set pins as Digital
-    TRISAbits.TRISA2 = 1;                   //set RA2 as input
-    TRISAbits.TRISA3 = 1;                   //set RA3 as input
-
-    TRISAbits.TRISA5 = 0;                   //set buzzer pin RA5 as output
-    TRISAbits.TRISA4 = 0;                   //set relay pin RA4 as output
-
-    while(1)
-    {
-        //LATAbits.LA2 = 1;
-        //LATAbits.LA3 = 1;
-
-        if(PORTAbits.RA2 == 0) key =0;      //If button1 pressed
-        if(PORTAbits.RA3 == 0) key =1;      //If button2 pressed
-
-        if(key == 0)
-        {
-            PORTAbits.RA4 = 1;             //Relay OFF
-            PORTAbits.RA5 = 0;             //Buzzer OFF
-            for(i=0;i<8;i++)                //Chase LED right to left
-            {
-                PORTB = 1<<i;
-                delay();
-                PORTB = 0x00;
-                delay();
+        if(key == 0){ // If key is 0
+            PORTAbits.RA4 = 0;  // Turn off relay (RA4)
+            PORTAbits.RA5 = 1;  // Turn on buzzer (RA5)
+            for(i = 0; i < 8; i++){ // Shift pattern across PORTB
+                PORTB = 1 << i;   // Set bit in PORTB
+                delay();          // Delay for visual effect
+                PORTB = 0x00;     // Clear PORTB
+                delay();          // Delay for visual effect
             }
         }
-        if(key == 1)
-        {
-            PORTAbits.RA4 = 0;             //Relay ON
-            PORTAbits.RA5 = 1;             //Buzzer ON
-            for(i=7;i> 0;i--)               //Chase LED left to right
-            {
-                PORTB = 1<<i;
-                delay();
-                PORTB = 0x00;
-                delay();
+        if(key == 1){ // If key is 1
+            PORTAbits.RA4 = 0;  // Turn off relay (RA4)
+            PORTAbits.RA5 = 1;  // Turn on buzzer (RA5)
+            for(i = 7; i > 0; i--){ // Reverse shift pattern across PORTB
+                PORTB = 1 << i;   // Set bit in PORTB
+                delay();          // Delay for visual effect
+                PORTB = 0x00;     // Clear PORTB
+                delay();          // Delay for visual effect
             }
         }
-
     }
 }
